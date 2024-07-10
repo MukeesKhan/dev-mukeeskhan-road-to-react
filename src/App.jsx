@@ -1,4 +1,5 @@
 import './App.css'
+import * as React from 'react'
 
 const App = () =>
 {
@@ -21,6 +22,8 @@ const App = () =>
     },
   ];
 
+  console.log('App Render');
+
   return (
     <div>
       <h1>Road To React</h1>
@@ -37,6 +40,7 @@ const App = () =>
 
 const List = (props) =>
 {
+  console.log('List Render');
   return (
   <ul> {/*Unordered list tag in html*/}
   {
@@ -50,6 +54,7 @@ const List = (props) =>
 
 const Item = (props) =>
 {
+  console.log('Item Render');
   return(<li>
     <span>
       <a href={props.item.url}>{props.item.title}</a>
@@ -62,16 +67,23 @@ const Item = (props) =>
 
 const Search =() =>
 {
+  console.log('Search Render');
+  //create search state
+  const [searchTerm,setSearchTerm] = React.useState({str: '', num: 0});
+
   const handleChange = (event) => {
-    //synthetic event
-    console.log(event);
-    //value of target (here: input HTML element)
-    console.log(event.target.value);
+    let n = searchTerm.num;
+    n++;
+    setSearchTerm({str: event.target.value, num: n});
   };
   return(
     <div>
         <label htmlFor="search">Search: </label>
         <input id="search" type="text" onChange={handleChange}/>
+
+        <p>
+          Searching for <strong>{searchTerm.str} {searchTerm.num}</strong>
+        </p>
     </div>
   )
 }
