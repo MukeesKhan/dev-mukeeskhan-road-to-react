@@ -24,11 +24,17 @@ const App = () =>
 
   console.log('App Render');
 
+  //Call Back Handler
+  const handleSearch = (event) =>
+  {
+    console.log(event.target.value);
+  };
+
   return (
     <div>
       <h1>Road To React</h1>
 
-      <Search />
+      <Search onSearch={handleSearch}/> {/*passing function for callback from child to parent */}
 
       <hr /> {/*Horizontal Break syntax in html */}
 
@@ -65,7 +71,7 @@ const Item = (props) =>
   </li>);
 }
 
-const Search =() =>
+const Search =(props) =>
 {
   console.log('Search Render');
   //create search state
@@ -75,6 +81,9 @@ const Search =() =>
     let n = searchTerm.num;
     n++;
     setSearchTerm({str: event.target.value, num: n});
+
+    //Execute callback
+    props.onSearch(event);
   };
   return(
     <div>
