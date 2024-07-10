@@ -24,21 +24,29 @@ const App = () =>
 
   console.log('App Render');
 
+    //create search state
+    const [searchTerm,setSearchTerm] = React.useState('');
+
   //Call Back Handler
   const handleSearch = (event) =>
   {
     console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
+
+  const searchedStories =stories.filter((story) =>{
+    return story.title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div>
       <h1>Road To React</h1>
 
-      <Search onSearch={handleSearch}/> {/*passing function for callback from child to parent */}
+      <Search onSearch={handleSearch} searchVal={searchTerm}/> {/*passing function for callback from child to parent */}
 
       <hr /> {/*Horizontal Break syntax in html */}
 
-      <List list={stories}/> {/*Calling another component*/}
+      <List list={searchedStories}/> {/*Calling another component*/}
 
     </div>
   );
@@ -50,7 +58,7 @@ const List = (props) =>
   return (
   <ul> {/*Unordered list tag in html*/}
   {
-    props.list.filter((obj) => obj.num_comments>0).map((itm) =>{
+    props.list.map((itm) =>{
       return (<Item key={itm.objectID} item={itm} />);
     })
   }
@@ -74,24 +82,14 @@ const Item = (props) =>
 const Search =(props) =>
 {
   console.log('Search Render');
-  //create search state
-  const [searchTerm,setSearchTerm] = React.useState({str: '', num: 0});
 
-  const handleChange = (event) => {
-    let n = searchTerm.num;
-    n++;
-    setSearchTerm({str: event.target.value, num: n});
-
-    //Execute callback
-    props.onSearch(event);
-  };
   return(
     <div>
         <label htmlFor="search">Search: </label>
-        <input id="search" type="text" onChange={handleChange}/>
+        <input id="search" type="text" onChange={props.onSearch}/>
 
         <p>
-          Searching for <strong>{searchTerm.str} {searchTerm.num}</strong>
+          Searching for <strong>{props.searchVal}</strong>
         </p>
     </div>
   )
