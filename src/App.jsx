@@ -24,17 +24,19 @@ const App = () =>
 
   console.log('App Render');
 
-    //create search state
-    const [searchTerm,setSearchTerm] = React.useState(localStorage.getItem('search') || 'React');
+  //create search state
+  const [searchTerm,setSearchTerm] = React.useState(localStorage.getItem('search') || 'React');
+
+  //Saving recent search to browser
+  React.useEffect(() => {
+    localStorage.setItem('search',searchTerm);
+  }, [searchTerm]);
 
   //Call Back Handler
   const handleSearch = (event) =>
   {
     console.log('Call back handler activated');
     setSearchTerm(event.target.value);
-
-    //saving recent searches
-    localStorage.setItem('search',event.target.value);
   };
 
   const searchedStories =stories.filter((story) =>{
