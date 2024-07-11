@@ -100,14 +100,14 @@ const Search =(props) =>
   const {searchVal, onSearch} = props;
 
   return(
-    <div>
+    <React.Fragment> {/* Short version <> html   </>*/ }
         <label htmlFor="search">Search: </label>
         <input id="search" type="text" value={props.searchVal} onChange={props.onSearch}/>
 
         <p>
           Searching for <strong>{props.searchVal}</strong>
         </p>
-    </div>
+    </React.Fragment>
   )
 }
 
