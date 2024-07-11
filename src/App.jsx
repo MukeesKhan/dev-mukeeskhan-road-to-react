@@ -25,7 +25,7 @@ const App = () =>
   console.log('App Render');
 
   //create search state
-  const [searchTerm,setSearchTerm] = React.useState(localStorage.getItem('search') || 'React');
+  const [searchTerm,setSearchTerm] = React.useState(localStorage.getItem('search') ?? 'React');
 
   //Saving recent search to browser
   React.useEffect(() => {
