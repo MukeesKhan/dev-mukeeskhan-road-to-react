@@ -1,6 +1,19 @@
 import './App.css'
 import * as React from 'react'
 
+
+//Custom React Hook
+const useStorageState = (key,initialState) =>{
+  const [term,setTerm]=React.useState(localStorage.getItem(key)??initialState);
+
+  React.useEffect(() =>
+  {
+    localStorage.setItem(key,term);
+  },[term,key]);
+
+  return [term,setTerm];
+};
+
 const App = () =>
 {
   const stories = [
@@ -25,12 +38,7 @@ const App = () =>
   console.log('App Render');
 
   //create search state
-  const [searchTerm,setSearchTerm] = React.useState(localStorage.getItem('search') ?? 'React');
-
-  //Saving recent search to browser
-  React.useEffect(() => {
-    localStorage.setItem('search',searchTerm);
-  }, [searchTerm]);
+  const [searchTerm,setSearchTerm] = useStorageState('search', 'React');
 
   //Call Back Handler
   const handleSearch = (event) =>
