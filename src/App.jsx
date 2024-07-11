@@ -56,7 +56,10 @@ const App = () =>
       <h1>Road To React</h1>
 
       {/*Creating Search Component */}
-      <InputWithLabel  id="search" label="Search" value={searchTerm} onInputChange={handleSearch}/> {/*passing function for callback from child to parent */}
+      <InputWithLabel  id="search" value={searchTerm} onInputChange={handleSearch}> {/*passing function for callback from child to parent */}
+
+      <strong>Search:</strong>
+      </InputWithLabel>
 
       <hr /> {/*Horizontal Break syntax in html */}
 
@@ -93,13 +96,13 @@ const Item = ({item}) =>
   </li>);
 }
 
-const InputWithLabel =({id, label, type ='text', value, onInputChange,}) =>
+const InputWithLabel =({id, type ='text', value, onInputChange, children}) =>
 {//type is provided default value of text
-  console.log({label} + 'Render');
+  console.log({children} + 'Render');
 
   return(
     <React.Fragment> {/* Short version <> html   </>*/ }
-        <label htmlFor={id}>{label}: </label>
+        <label htmlFor={id}>{children} </label>
         &nbsp;
         <input id={id} type={type} value={value} onChange={onInputChange}/>
     </React.Fragment>
