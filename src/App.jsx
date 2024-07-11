@@ -55,7 +55,8 @@ const App = () =>
     <div>
       <h1>Road To React</h1>
 
-      <Search onSearch={handleSearch} searchVal={searchTerm}/> {/*passing function for callback from child to parent */}
+      {/*Creating Search Component */}
+      <InputWithLabel  id="search" label="Search" value={searchTerm} onInputChange={handleSearch}/> {/*passing function for callback from child to parent */}
 
       <hr /> {/*Horizontal Break syntax in html */}
 
@@ -92,21 +93,15 @@ const Item = ({item}) =>
   </li>);
 }
 
-const Search =(props) =>
-{
-  console.log('Search Render');
-
-  //applying destructuring or do in function signature like Search = ({searchVal , onSearch})
-  const {searchVal, onSearch} = props;
+const InputWithLabel =({id, label, type ='text', value, onInputChange,}) =>
+{//type is provided default value of text
+  console.log({label} + 'Render');
 
   return(
     <React.Fragment> {/* Short version <> html   </>*/ }
-        <label htmlFor="search">Search: </label>
-        <input id="search" type="text" value={props.searchVal} onChange={props.onSearch}/>
-
-        <p>
-          Searching for <strong>{props.searchVal}</strong>
-        </p>
+        <label htmlFor={id}>{label}: </label>
+        &nbsp;
+        <input id={id} type={type} value={value} onChange={onInputChange}/>
     </React.Fragment>
   )
 }
