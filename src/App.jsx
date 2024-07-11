@@ -25,13 +25,16 @@ const App = () =>
   console.log('App Render');
 
     //create search state
-    const [searchTerm,setSearchTerm] = React.useState('React');
+    const [searchTerm,setSearchTerm] = React.useState(localStorage.getItem('search') || 'React');
 
   //Call Back Handler
   const handleSearch = (event) =>
   {
-    console.log(event.target.value);
+    console.log('Call back handler activated');
     setSearchTerm(event.target.value);
+
+    //saving recent searches
+    localStorage.setItem('search',event.target.value);
   };
 
   const searchedStories =stories.filter((story) =>{
