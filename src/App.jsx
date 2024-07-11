@@ -55,8 +55,8 @@ const App = () =>
     <div>
       <h1>Road To React</h1>
 
-      {/*Creating Search Component */}
-      <InputWithLabel  id="search" value={searchTerm} onInputChange={handleSearch}> {/*passing function for callback from child to parent */}
+      {/*Creating Search Component */}  {/*isFocused by default alone means it is true */}
+      <InputWithLabel  id="search" value={searchTerm} isFocused onInputChange={handleSearch}> {/*passing function for callback from child to parent */}
 
       <strong>Search:</strong>
       </InputWithLabel>
@@ -96,15 +96,24 @@ const Item = ({item}) =>
   </li>);
 }
 
-const InputWithLabel =({id, type ='text', value, onInputChange, children}) =>
+const InputWithLabel =({id, type ='text', value, isFocused, onInputChange, children}) =>
 {//type is provided default value of text
   console.log({children} + 'Render');
+
+  const inputRef =React.useRef();//null reference at start
+
+  React.useEffect(() => {
+    if(isFocused && inputRef.current)
+    {
+      inputRef.current.focus();
+    }
+  },[isFocused]);
 
   return(
     <React.Fragment> {/* Short version <> html   </>*/ }
         <label htmlFor={id}>{children} </label>
         &nbsp;
-        <input id={id} type={type} value={value} onChange={onInputChange}/>
+        <input ref={inputRef} id={id} type={type} value={value} onChange={onInputChange}/>
     </React.Fragment>
   )
 }
