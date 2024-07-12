@@ -47,14 +47,20 @@ const App = () =>
 
   console.log('App Render');
 
-  const [stories,setStories] =React.useState([]);
+  const [stories,setStories] = React.useState([]);
+  const [isLoading,setIsLoading] = React.useState(false);//for loading indication of data fetching
+  const [isError,setIsError] = React.useState(false);//for error handling during data fetching
 
   //Fetching Data (simulation)
   React.useEffect(() => 
   {
+    setIsLoading(true);
     getAsyncStories().then(result => 
     {
       setStories(result.data.stories);
+      setIsLoading(false);
+    }).catch(()=>{
+      setIsError(true);
     });
   },[]);
 
@@ -96,7 +102,18 @@ const App = () =>
 
       <hr /> {/*Horizontal Break syntax in html */}
 
-      <List list={searchedStories} onRemoveItem={handleRemoveStory}/> {/*Calling another component*/}
+      {isError && <strong>Something went wrong. Please Check Your Connection...</strong>}
+
+      {/*Performing conditional Rendering using Ternary operator */}
+      {
+        isLoading ? 
+        (
+          <strong>Loading...</strong>
+        ) :
+        (
+          <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+        )
+      }
 
     </div>
   );
