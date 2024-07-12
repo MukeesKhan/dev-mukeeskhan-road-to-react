@@ -1,6 +1,24 @@
 import './App.css'
 import * as React from 'react'
 
+const initialStories = [
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+];
 
 //Custom React Hook
 const useStorageState = (key,initialState) =>{
@@ -16,26 +34,22 @@ const useStorageState = (key,initialState) =>{
 
 const App = () =>
 {
-  const stories = [
-    {
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ];
 
   console.log('App Render');
+
+  const [stories,setStories] =React.useState(initialStories);
+
+  //Remove item Handler
+  const handleRemoveStory = (item) =>
+  {
+    console.log('Remove Story Handler activated');
+    
+    const newStories = stories.filter((story) => {
+     return (item.objectID !== story.objectID);
+    });
+
+    setStories(newStories);
+  };
 
   //create search state
   const [searchTerm,setSearchTerm] = useStorageState('search', 'React');
@@ -63,27 +77,27 @@ const App = () =>
 
       <hr /> {/*Horizontal Break syntax in html */}
 
-      <List list={searchedStories}/> {/*Calling another component*/}
+      <List list={searchedStories} onRemoveItem={handleRemoveStory}/> {/*Calling another component*/}
 
     </div>
   );
 }
 
-const List = ({list}) =>
+const List = ({list, onRemoveItem}) =>
 {
   console.log('List Render');
   return (
   <ul> {/*Unordered list tag in html*/}
   {
     list.map((itm) =>{
-      return (<Item key={itm.objectID} item={itm} />);
+      return (<Item key={itm.objectID} item={itm} onRemoveItem={onRemoveItem} />);
     })
   }
 </ul>
   )
 }
 
-const Item = ({item}) =>
+const Item = ({item, onRemoveItem}) =>
 {
   console.log('Item Render');
   return(<li>
@@ -93,12 +107,17 @@ const Item = ({item}) =>
     <span> {item.author} </span>
     <span> {item.num_comments} </span>
     <span> {item.points} </span>
+    <span>
+      <button type="button" onClick={() => onRemoveItem(item)}>
+        Dismiss
+      </button>
+    </span>
   </li>);
 }
 
 const InputWithLabel =({id, type ='text', value, isFocused, onInputChange, children}) =>
 {//type is provided default value of text
-  console.log({children} + 'Render');
+  console.log(id + ' Render');
 
   const inputRef =React.useRef();//null reference at start
 
