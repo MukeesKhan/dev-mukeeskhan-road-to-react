@@ -20,6 +20,16 @@ const initialStories = [
   },
 ];
 
+const getAsyncStories = () => //simulating asynchronous data fetching with 2 second delay
+{
+  return new Promise((resolve) => {
+    return setTimeout(
+      () => {
+        return resolve({data : {stories: initialStories} })
+      },2000)
+  });
+};
+
 //Custom React Hook
 const useStorageState = (key,initialState) =>{
   const [term,setTerm]=React.useState(localStorage.getItem(key)??initialState);
@@ -37,7 +47,16 @@ const App = () =>
 
   console.log('App Render');
 
-  const [stories,setStories] =React.useState(initialStories);
+  const [stories,setStories] =React.useState([]);
+
+  //Fetching Data (simulation)
+  React.useEffect(() => 
+  {
+    getAsyncStories().then(result => 
+    {
+      setStories(result.data.stories);
+    });
+  },[]);
 
   //Remove item Handler
   const handleRemoveStory = (item) =>
