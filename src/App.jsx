@@ -20,6 +20,7 @@ const initialStories = [
   },
 ];
 
+
 const getAsyncStories = () => //simulating asynchronous data fetching with 2 second delay
 {
   return new Promise((resolve) => {
@@ -28,6 +29,27 @@ const getAsyncStories = () => //simulating asynchronous data fetching with 2 sec
         return resolve({data : {stories: initialStories} })
       },2000)
   });
+};
+
+//Reducer Function
+const storiesReducer = (state,action) =>
+{
+  switch (action.type)
+  {
+    case 'SET_STORIES':
+      {
+        return action.payload;
+      }
+    case 'REMOVE_STORY':
+      {
+        return state.filter((story) => {
+          return action.payload.objectID !== story.objectID;
+        });
+      }
+      default:
+        //unhandled case
+        throw new Error();
+  }
 };
 
 //Custom React Hook
@@ -47,7 +69,7 @@ const App = () =>
 
   console.log('App Render');
 
-  const [stories,setStories] = React.useState([]);
+  const [stories,dispatchStories] = React.useReducer(storiesReducer,[]);
   const [isLoading,setIsLoading] = React.useState(false);//for loading indication of data fetching
   const [isError,setIsError] = React.useState(false);//for error handling during data fetching
 
@@ -57,7 +79,7 @@ const App = () =>
     setIsLoading(true);
     getAsyncStories().then(result => 
     {
-      setStories(result.data.stories);
+      dispatchStories({type: 'SET_STORIES', payload: result.data.stories});
       setIsLoading(false);
     }).catch(()=>{
       setIsError(true);
@@ -69,11 +91,8 @@ const App = () =>
   {
     console.log('Remove Story Handler activated');
     
-    const newStories = stories.filter((story) => {
-     return (item.objectID !== story.objectID);
-    });
+    dispatchStories({type: 'REMOVE_STORY' , payload: item});
 
-    setStories(newStories);
   };
 
   //create search state
