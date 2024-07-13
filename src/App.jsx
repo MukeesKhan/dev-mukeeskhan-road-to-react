@@ -37,7 +37,7 @@ const storiesReducer = (state,action) =>
 
 //Custom React Hook
 const useStorageState = (key,initialState) =>{
-  const [term,setTerm]=React.useState(localStorage.getItem(key)??initialState);
+  const [term,setTerm]=React.useState(localStorage.getItem(key) || initialState);
 
   React.useEffect(() =>
   {
@@ -54,21 +54,26 @@ const App = () =>
 
   const [stories,dispatchStories] = React.useReducer(storiesReducer,{data: [], isLoading: false, isError: false});
 
+    //create search state
+    const [searchTerm,setSearchTerm] = useStorageState('search', 'React');
+
   //Fetching Data (simulation)
   React.useEffect(() => 
   {
+    if(!searchTerm)//return nothing if searchTerm: empty,null,undefined case
+      return;
     //starting data fetch
     dispatchStories({type: 'STORIES_FETCH_INIT'});
     
     //remote fetching from api
-    fetch(`${API_ENDPOINT}react`)
+    fetch(`${API_ENDPOINT}${searchTerm}`)
       .then((response) => response.json()).then(result => 
     {
       dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
     }).catch(()=>{
       dispatchStories({type: 'STORIES_FETCH_FAILURE'})
     });
-  },[]);
+  },[searchTerm]);
 
   //Remove item Handler
   const handleRemoveStory = (item) =>
@@ -79,9 +84,6 @@ const App = () =>
 
   };
 
-  //create search state
-  const [searchTerm,setSearchTerm] = useStorageState('search', 'React');
-
   //Call Back Handler
   const handleSearch = (event) =>
   {
@@ -89,9 +91,7 @@ const App = () =>
     setSearchTerm(event.target.value);
   };
 
-  const searchedStories =stories.data.filter((story) =>{
-    return story.title.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+
 
   return (
     <div>
@@ -114,7 +114,7 @@ const App = () =>
           <strong>Loading...</strong>
         ) :
         (
-          <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+          <List list={stories.data} onRemoveItem={handleRemoveStory}/>
         )
       }
 
