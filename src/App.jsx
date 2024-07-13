@@ -57,8 +57,8 @@ const App = () =>
     //create search state
     const [searchTerm,setSearchTerm] = useStorageState('search', 'React');
 
-  //Fetching Data (simulation)
-  React.useEffect(() => 
+  //Fetching Data
+  const handleFetchStories = React.useCallback(() => //memoized function
   {
     if(!searchTerm)//return nothing if searchTerm: empty,null,undefined case
       return;
@@ -74,6 +74,11 @@ const App = () =>
       dispatchStories({type: 'STORIES_FETCH_FAILURE'})
     });
   },[searchTerm]);
+
+  React.useEffect(() =>
+  {
+    handleFetchStories();
+  },[handleFetchStories]);
 
   //Remove item Handler
   const handleRemoveStory = (item) =>
