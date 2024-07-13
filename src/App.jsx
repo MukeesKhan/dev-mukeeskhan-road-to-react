@@ -52,28 +52,34 @@ const App = () =>
 
   console.log('App Render');
 
+  //STATES SECTION
   const [stories,dispatchStories] = React.useReducer(storiesReducer,{data: [], isLoading: false, isError: false});
 
-    //create search state
-    const [searchTerm,setSearchTerm] = useStorageState('search', 'React');
+  //create search state
+  const [searchTerm,setSearchTerm] = useStorageState('search', 'React');
 
+  const [url,setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
+  //END OF STATES SECTION
+
+  //EVENT HANDLER FUNCTIONS SECTION
   //Fetching Data
   const handleFetchStories = React.useCallback(() => //memoized function
   {
-    if(!searchTerm)//return nothing if searchTerm: empty,null,undefined case
-      return;
+
+    //removed empty string check as button to conduct fetch becomes disabled when empty string is set
     //starting data fetch
     dispatchStories({type: 'STORIES_FETCH_INIT'});
     
     //remote fetching from api
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then((response) => response.json()).then(result => 
     {
       dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
     }).catch(()=>{
       dispatchStories({type: 'STORIES_FETCH_FAILURE'})
     });
-  },[searchTerm]);
+  },[url]);
 
   React.useEffect(() =>
   {
@@ -89,24 +95,38 @@ const App = () =>
 
   };
 
-  //Call Back Handler
-  const handleSearch = (event) =>
+  //Call Back Handler For Search Input
+  const handleSearchInput = (event) =>
   {
-    console.log('Call back handler activated');
+    console.log('Search Input Call back handler activated');
     setSearchTerm(event.target.value);
   };
 
+  //Call Back Handler for Confirmed Search Input
+  const handleSearchSubmit = () =>
+  {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
 
+  //END OF EVENT HANDLER FUNCTIONS SECTION
 
   return (
     <div>
       <h1>Road To React</h1>
 
       {/*Creating Search Component */}  {/*isFocused by default alone means it is true */}
-      <InputWithLabel  id="search" value={searchTerm} isFocused onInputChange={handleSearch}> {/*passing function for callback from child to parent */}
+      <InputWithLabel  id="search" value={searchTerm} isFocused onInputChange={handleSearchInput}> {/*passing function for callback from child to parent */}
 
       <strong>Search:</strong>
       </InputWithLabel>
+
+      <button
+        type="button"
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+      >
+        Submit
+      </button>
 
       <hr /> {/*Horizontal Break syntax in html */}
 
