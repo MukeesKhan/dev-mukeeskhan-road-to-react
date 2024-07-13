@@ -23,12 +23,13 @@ const initialStories = [
 
 const getAsyncStories = () => //simulating asynchronous data fetching with 2 second delay
 {
-  return new Promise((resolve) => {
-    return setTimeout(
-      () => {
-        return resolve({data : {stories: initialStories} })
-      },2000)
-  });
+  return new Promise((resolve, reject) => setTimeout(reject,2000));//impossible state text
+  //return new Promise((resolve) => {
+    //return setTimeout(
+      //() => {
+        //return resolve({data : {stories: initialStories} })
+      //},2000)
+  //});
 };
 
 //Reducer Function
@@ -36,19 +37,30 @@ const storiesReducer = (state,action) =>
 {
   switch (action.type)
   {
-    case 'SET_STORIES':
-      {
-        return action.payload;
-      }
+    case 'STORIES_FETCH_INIT':
+    {//...state makes copy of object using spread operator then overwrites the properties
+      return {...state, isLoading: true, isError: false};
+    }
+    case 'STORIES_FETCH_SUCCESS':
+    {
+      return {...state, isLoading: false, isError: false, data: action.payload};
+    }
+    case 'STORIES_FETCH_FAILURE':
+    {
+      return {...state, isLoading: false, isError:true};
+    }
     case 'REMOVE_STORY':
-      {
-        return state.filter((story) => {
-          return action.payload.objectID !== story.objectID;
-        });
-      }
-      default:
-        //unhandled case
-        throw new Error();
+    {
+      return {
+        ...state, data: state.data.filter((story) => 
+        {
+          return (action.payload.objectID !== story.objectID);
+        })
+      };
+    }
+    default:
+      //unhandled case
+      throw new Error();
   }
 };
 
@@ -69,20 +81,19 @@ const App = () =>
 
   console.log('App Render');
 
-  const [stories,dispatchStories] = React.useReducer(storiesReducer,[]);
-  const [isLoading,setIsLoading] = React.useState(false);//for loading indication of data fetching
-  const [isError,setIsError] = React.useState(false);//for error handling during data fetching
+  const [stories,dispatchStories] = React.useReducer(storiesReducer,{data: [], isLoading: false, isError: false});
 
   //Fetching Data (simulation)
   React.useEffect(() => 
   {
-    setIsLoading(true);
+    //starting data fetch
+    dispatchStories({type: 'STORIES_FETCH_INIT'});
+
     getAsyncStories().then(result => 
     {
-      dispatchStories({type: 'SET_STORIES', payload: result.data.stories});
-      setIsLoading(false);
+      dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.data.stories});
     }).catch(()=>{
-      setIsError(true);
+      dispatchStories({type: 'STORIES_FETCH_FAILURE'})
     });
   },[]);
 
@@ -105,7 +116,7 @@ const App = () =>
     setSearchTerm(event.target.value);
   };
 
-  const searchedStories =stories.filter((story) =>{
+  const searchedStories =stories.data.filter((story) =>{
     return story.title.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -121,11 +132,11 @@ const App = () =>
 
       <hr /> {/*Horizontal Break syntax in html */}
 
-      {isError && <strong>Something went wrong. Please Check Your Connection...</strong>}
+      {stories.isError && <strong>Something went wrong. Please Check Your Connection...</strong>}
 
       {/*Performing conditional Rendering using Ternary operator */}
       {
-        isLoading ? 
+        stories.isLoading ? 
         (
           <strong>Loading...</strong>
         ) :
