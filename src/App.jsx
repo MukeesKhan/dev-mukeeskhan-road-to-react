@@ -1,36 +1,7 @@
 import './App.css'
 import * as React from 'react'
 
-const initialStories = [
-  {
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
-
-
-const getAsyncStories = () => //simulating asynchronous data fetching with 2 second delay
-{
-  return new Promise((resolve, reject) => setTimeout(reject,2000));//impossible state text
-  //return new Promise((resolve) => {
-    //return setTimeout(
-      //() => {
-        //return resolve({data : {stories: initialStories} })
-      //},2000)
-  //});
-};
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 //Reducer Function
 const storiesReducer = (state,action) =>
@@ -88,10 +59,12 @@ const App = () =>
   {
     //starting data fetch
     dispatchStories({type: 'STORIES_FETCH_INIT'});
-
-    getAsyncStories().then(result => 
+    
+    //remote fetching from api
+    fetch(`${API_ENDPOINT}react`)
+      .then((response) => response.json()).then(result => 
     {
-      dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.data.stories});
+      dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
     }).catch(()=>{
       dispatchStories({type: 'STORIES_FETCH_FAILURE'})
     });
