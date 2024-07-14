@@ -104,9 +104,11 @@ const App = () =>
   };
 
   //Call Back Handler for Confirmed Search Input
-  const handleSearchSubmit = () =>
+  const handleSearchSubmit = (event) =>
   {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+
+    event.preventDefault(); //prevent form submission from refreshing the browser
   };
 
   //END OF EVENT HANDLER FUNCTIONS SECTION
@@ -115,19 +117,8 @@ const App = () =>
     <div>
       <h1>Road To React</h1>
 
-      {/*Creating Search Component */}  {/*isFocused by default alone means it is true */}
-      <InputWithLabel  id="search" value={searchTerm} isFocused onInputChange={handleSearchInput}> {/*passing function for callback from child to parent */}
-
-      <strong>Search:</strong>
-      </InputWithLabel>
-
-      <button
-        type="button"
-        disabled={!searchTerm}
-        onClick={handleSearchSubmit}
-      >
-        Submit
-      </button>
+      {/*Creating Search Form Component */}
+      <SearchForm searchTerm={searchTerm} onSearchInput={handleSearchInput} onSearchSubmit={handleSearchSubmit}/>
 
       <hr /> {/*Horizontal Break syntax in html */}
 
@@ -200,6 +191,26 @@ const InputWithLabel =({id, type ='text', value, isFocused, onInputChange, child
         <input ref={inputRef} id={id} type={type} value={value} onChange={onInputChange}/>
     </React.Fragment>
   )
+}
+
+//Search Form
+const SearchForm = ({searchTerm, onSearchInput,onSearchSubmit}) =>
+{
+  return (<form onSubmit={onSearchSubmit}>
+
+    {/*Creating Search Component */}  {/*isFocused by default alone means it is true */}
+    <InputWithLabel  id="search" value={searchTerm} isFocused onInputChange={onSearchInput}> {/*passing function for callback from child to parent */}
+
+    <strong>Search:</strong>
+    </InputWithLabel>
+
+    <button
+      type="submit"
+      disabled={!searchTerm}
+    >
+      Submit
+    </button>
+  </form>)
 }
 
 export default App
