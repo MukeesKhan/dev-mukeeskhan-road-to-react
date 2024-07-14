@@ -1,5 +1,6 @@
 import './App.css'
-import * as React from 'react'
+import * as React from 'react';
+import axios from 'axios';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -72,10 +73,10 @@ const App = () =>
     dispatchStories({type: 'STORIES_FETCH_INIT'});
     
     //remote fetching from api
-    fetch(url)
-      .then((response) => response.json()).then(result => 
+    axios.get(url)
+      .then((result) => 
     {
-      dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
+      dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.data.hits});
     }).catch(()=>{
       dispatchStories({type: 'STORIES_FETCH_FAILURE'})
     });
