@@ -65,7 +65,7 @@ const App = () =>
 
   //EVENT HANDLER FUNCTIONS SECTION
   //Fetching Data
-  const handleFetchStories = React.useCallback(() => //memoized function
+  const handleFetchStories = React.useCallback( async () => //memoized function
   {
 
     //removed empty string check as button to conduct fetch becomes disabled when empty string is set
@@ -73,13 +73,13 @@ const App = () =>
     dispatchStories({type: 'STORIES_FETCH_INIT'});
     
     //remote fetching from api
-    axios.get(url)
-      .then((result) => 
-    {
-      dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.data.hits});
-    }).catch(()=>{
-      dispatchStories({type: 'STORIES_FETCH_FAILURE'})
-    });
+    try{
+      const result = await axios.get(url);
+
+      dispatchStories({type: 'STORIES_FETCH_SUCCESS' , payload: result.data.hits});
+    } catch{
+      dispatchStories({type: 'STORIES_FETCH_FAILURE' });
+    }
   },[url]);
 
   React.useEffect(() =>
